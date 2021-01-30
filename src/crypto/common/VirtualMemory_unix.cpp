@@ -152,6 +152,8 @@ void *xmrig::VirtualMemory::allocateExecutableMemory(size_t size, bool hugePages
 
 void *xmrig::VirtualMemory::allocateLargePagesMemory(size_t size)
 {
+    size = align(size, 32 * 1024 * 1024);
+
 #   if defined(__APPLE__)
     void *mem = mmap(0, size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON, VM_FLAGS_SUPERPAGE_SIZE_2MB, 0);
 #   elif defined(__FreeBSD__)
@@ -166,7 +168,7 @@ void *xmrig::VirtualMemory::allocateLargePagesMemory(size_t size)
     constexpr int flag_2mb = 0;
 #   endif
 
-    void *mem = mmap(0, size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB | MAP_POPULATE | flag_2mb, 0, 0);
+    void *mem = mmap(0, size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB | MAP_POPULATE | (25 << MAP_HUGE_SHIFT), 0, 0);
 
 #   endif
 
